@@ -64,7 +64,7 @@ for ds_cnt, ds in enumerate(datasets):
     X = dataset_cleaned_imputed.drop(columns=['party'])
     y = dataset_cleaned_imputed['party']
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
     feature_names = X.columns
 
     x_min, x_max = X.min(axis=0) - 0.5, X.max(axis=0) + 0.5
@@ -78,7 +78,6 @@ for ds_cnt, ds in enumerate(datasets):
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
         
-        # Apply PCA after scaling
     pca = PCA(n_components=2)
     X_train_pca = pca.fit_transform(X_train_scaled)
     X_test_pca = pca.transform(X_test_scaled)
@@ -94,7 +93,6 @@ for ds_cnt, ds in enumerate(datasets):
     ax.set_yticks(())
     i += 1
 
-    # iterate over classifiers
     for name, clf in zip(names, classifiers):
         ax = plt.subplot(len(datasets), len(classifiers) + 1, i)
     
@@ -114,7 +112,6 @@ for ds_cnt, ds in enumerate(datasets):
             clf, X_train_pca, cmap=cm, alpha=0.8, ax=ax, eps=0.5
         )
     
-        # Plot the training points
         ax.scatter(X_train_pca[:, 0], X_train_pca[:, 1], c=y_train, cmap=cm_bright, edgecolors="k")
         ax.scatter(X_test_pca[:, 0], X_test_pca[:, 1], c=y_test, cmap=cm_bright, alpha=0.6, edgecolors="k")
     
