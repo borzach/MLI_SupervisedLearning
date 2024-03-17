@@ -3,7 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import r2_score
 from sklearn.linear_model import Ridge, Lasso
-from sklearn.neural_network import MLPRegressor
+# from sklearn.neural_network import MLPRegressor
 from sklearn.svm import SVR
 from sklearn.ensemble import AdaBoostRegressor
 import optuna
@@ -41,12 +41,14 @@ def objective_lasso(trial):
     y_pred = model.predict(x_val)
     return r2_score(y_val, y_pred)
 
-def objective_mlp(trial):
-    hidden_layer_sizes = [trial.suggest_int(f'n_units_l{i}', 1, 100) for i in range(trial.suggest_int('n_layers', 1, 3))]
-    model = MLPRegressor(hidden_layer_sizes=hidden_layer_sizes, max_iter=500)
-    model.fit(x_train_split, y_train_split)
-    y_pred = model.predict(x_val)
-    return r2_score(y_val, y_pred)
+# def objective_mlp(trial):
+#     n_layers = trial.suggest_int('n_layers', 1, 3)
+#     hidden_layer_sizes = [trial.suggest_int(f'n_units_l{i}', 1, 100) for i in range(n_layers)]
+#     model = MLPRegressor(hidden_layer_sizes=hidden_layer_sizes, max_iter=500)
+#     model.fit(x_train_split, y_train_split)
+#     y_pred = model.predict(x_val)
+#     return r2_score(y_val, y_pred)
+
 
 def objective_svr(trial):
     C = trial.suggest_float('C', 1e-3, 10, log=True)
@@ -71,8 +73,8 @@ study_ridge.optimize(objective_ridge, n_trials=100)
 study_lasso = optuna.create_study(direction='maximize')
 study_lasso.optimize(objective_lasso, n_trials=100)
 
-study_mlp = optuna.create_study(direction='maximize')
-study_mlp.optimize(objective_mlp, n_trials=100)
+# study_mlp = optuna.create_study(direction='maximize')
+# study_mlp.optimize(objective_mlp, n_trials=100)
 
 study_svr = optuna.create_study(direction='maximize')
 study_svr.optimize(objective_svr, n_trials=100)
@@ -83,7 +85,7 @@ study_adaboost.optimize(objective_adaboost, n_trials=100)
 # Get best parameters
 best_params_ridge = study_ridge.best_params
 best_params_lasso = study_lasso.best_params
-best_params_mlp = study_mlp.best_params
+# best_params_mlp = study_mlp.best_params
 best_params_svr = study_svr.best_params
 best_params_adaboost = study_adaboost.best_params
 
@@ -98,10 +100,10 @@ best_lasso.fit(x_train_scaled, y_train)
 y_pred_test_lasso = best_lasso.predict(x_test_scaled)
 r2_test_lasso = r2_score(y_test, y_pred_test_lasso)
 
-best_mlp = MLPRegressor(**best_params_mlp, max_iter=500)
-best_mlp.fit(x_train_scaled, y_train)
-y_pred_test_mlp = best_mlp.predict(x_test_scaled)
-r2_test_mlp = r2_score(y_test, y_pred_test_mlp)
+# best_mlp = MLPRegressor(**best_params_mlp, max_iter=500)
+# best_mlp.fit(x_train_scaled, y_train)
+# y_pred_test_mlp = best_mlp.predict(x_test_scaled)
+# r2_test_mlp = r2_score(y_test, y_pred_test_mlp)
 
 best_svr = SVR(**best_params_svr)
 best_svr.fit(x_train_scaled, y_train)
@@ -122,9 +124,9 @@ print("Lasso Regression:")
 print(f"Best params: {best_params_lasso}")
 print(f"Test R2 score: {r2_test_lasso}\n")
 
-print("MLP Regressor:")
-print(f"Best params: {best_params_mlp}")
-print(f"Test R2 score: {r2_test_mlp}\n")
+# print("MLP Regressor:")
+# print(f"Best params: {best_params_mlp}")
+# print(f"Test R2 score: {r2_test_mlp}\n")
 
 print("SVR:")
 print(f"Best params: {best_params_svr}")
